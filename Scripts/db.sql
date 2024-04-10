@@ -1,32 +1,44 @@
-create database if not exists Hotel;
-create table if not exists Hotel.empleado(
-	ID_empleado INT NOT NULL auto_increment,
-    nombre varchar(50) not null,
-    fecha_contratacion varchar(50) NOT NULL,
-    rol enum('matutino','vespertino'),
-    PRiMARY KEY (id_empleado)
-    
+create database if not exists hotel;
+create table if not exists hotel.empleado(
+	id_empleado INT NOT NULL AUTO_INCREMENT,
+	nombre varchar(30) NOT NULL,
+    fecha_contratacion date,
+    turno enum('matutino', 'vespertino'),
+    telefono varchar(10),
+    primary key (id_empleado)
 );
 
-CREATE TABLE if not exists Hotel.reserva (
-    id_reserva INT PRIMARY KEY AUTO_INCREMENT,
-    id_cliente INT,
-    id_habitacion INT,
-    fecha_inicio DATE,
-    fecha_fin DATE,
-    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    estado_reserva VARCHAR(20),
-    metodo_pago VARCHAR(50),
-    precio_total DECIMAL(10, 2),
-    FOREIGN KEY (id_cliente) REFERENCES Cliente(id_cliente),
-    FOREIGN KEY (id_habitacion) REFERENCES Habitacion(id_habitacion)
+create table if not exists hotel.cliente(
+	id_cliente INT NOT NULL AUTO_INCREMENT,
+	nombre varchar (30) not null,
+    correo varchar (30),
+    telefono varchar(10)  not null,
+    direccion varchar (50),
+    primary key(id_cliente)
 );
 
-CREATE TABLE if not exists Hotel.habitacion (
-    id_habitacion INT PRIMARY KEY AUTO_INCREMENT,
-    tipo_habitacion VARCHAR(50),
-    estado_disponibilidad VARCHAR(20),
-    precio_noche DECIMAL(10, 2),
-    capacidad INT,
-    descripcion TEXT
+create table if not exists hotel.habitacion(
+	id_habitacion INT not null AUTO_INCREMENT,
+    precio varchar(30) not null,
+    habitacion_tipo varchar(50) not null,
+    capacidad varchar (30) not null,
+    disponibilidad enum('ocupado','vacio') not null,
+    primary key(id_habitacion)
 );
+
+create table if not exists hotel.reserva(
+	id_reserva INT NOT NULL AUTO_INCREMENT,
+    fecha_inicio date NOT NULL,
+    fecha_fin date NOT NULL,
+    estado_reserva enum('cancelada', 'aprobada') not null,
+    fecha_creacion timestamp default current_timestamp,
+    precio_total varchar(50) not null,
+    id_habitacion int not null,
+    id_cliente int not null,
+    id_empleado int not null,
+    primary key(id_reserva)
+);
+
+ALTER TABLE hotel.reserva add foreign key (id_habitacion) references hotel.habitacion(id_habitacion)ON UPDATE CASCADE  ON DELETE CASCADE;
+ALTER TABLE hotel.reserva add foreign key(id_cliente)references hotel.cliente(id_cliente)ON UPDATE CASCADE  ON DELETE CASCADE;
+ALTER TABLE hotel.reserva add foreign key(id_empleado)references hotel.empleado(id_empleado)ON UPDATE CASCADE  ON DELETE CASCADE;
