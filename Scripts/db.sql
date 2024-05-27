@@ -98,6 +98,8 @@ INSERT INTO hotel.reserva (fecha_inicio, fecha_fin, estado_reserva, precio_total
 
 
 
+-- CONSULTAS BASICAS
+-- SELECCIONAR TODOS LOS DATOS DE UNA TABLA
 -- Mostrar los datos de la tabla cliente
 SELECT * FROM hotel.cliente;
 -- Mostrar los datos de la tabla empleado
@@ -105,5 +107,87 @@ SELECT * FROM hotel.empleado;
 -- Mostrar datos de la habitacion
 SELECT * FROM hotel.habitacion;
 --  Mostrar datos de la reserva
-SELECT * FROM hotel.reserva;
 
+-- Seleccionar datos específicos de una tabla:
+SELECT nombre, telefono FROM hotel.empleado;
+
+
+-- Seleccionar datos filtrados por una condición:**
+SELECT * FROM hotel.cliente WHERE nombre = "Ana Martínez";
+
+-- Ordenar resultados en orden ascendente o descendente:**
+SELECT * FROM hotel.cliente ORDER BY id_cliente DESC;
+SELECT * FROM hotel.cliente ORDER BY id_cliente asc;
+
+-- Contar el número de filas en una tabla:**
+SELECT COUNT(*) FROM hotel.empleado;
+
+-- Sumar valores de una columna:**
+SELECT SUM(precio_total) FROM hotel.reserva;
+
+-- **Obtener el valor máximo y mínimo de una columna:**
+SELECT MAX(precio_total), MIN(precio_total) FROM hotel.reserva;
+
+-- Unir dos tablas usando INNER JOIN:
+SELECT  l.id_empleado, l.nombre, l.fecha_contratacion, l.telefono, l.turno, r.fecha_fin, r.fecha_inicio, r.id_habitacion, h.capacidad, h.habitacion_tipo, h.precio, c.id_cliente
+FROM hotel.empleado l
+inner join hotel.reserva r on r.id_empleado = l.id_empleado
+inner join hotel.habitacion h on r.id_habitacion = h.id_habitacion
+inner join hotel.cliente c on r.id_cliente = c.id_cliente;
+ 
+-- ### Consultas intermedias
+SELECT  l.id_empleado, l.nombre, l.fecha_contratacion, l.telefono, l.turno, r.fecha_fin, r.fecha_inicio, r.id_habitacion, h.capacidad, h.habitacion_tipo, h.precio
+FROM hotel.empleado l
+inner join hotel.reserva r on r.id_empleado = l.id_empleado
+inner join hotel.habitacion h on r.id_habitacion = h.id_habitacion
+WHERE h.precio > 200;
+
+SELECT e.nombre AS empleados, habitacion_tipo AS habitaciones
+FROM empleado e
+JOIN habitacion h ON e.id_empleado = h.id_habitacion
+WHERE h.precio > 200;
+
+-- Consulta con subconsultas correlacionadas:**
+SELECT h.disponibilidad AS disponibles, h.precio
+FROM habitacion h
+WHERE h.precio > (
+    SELECT AVG(precio) FROM habitacion
+);
+
+
+-- **Consulta con funciones de agregación y GROUP BY:**
+SELECT id_habitacion, AVG(precio_total) AS precio_promedio
+FROM hotel.reserva
+GROUP BY id_habitacion;
+
+
+-- **Consulta con funciones de fecha:**
+SELECT nombre, fecha_contratacion
+FROM empleado
+WHERE DATEPART (YEAR, fecha_contratacion) = '2023-01-15';
+
+-- **Consulta con UNION para combinar resultados:**
+SELECT nombre, 'Empleado' AS tipo
+FROM empleado
+UNION
+SELECT nombre, 'Cliente' AS tipo
+FROM cliente;
+
+-- **Consulta con operadores LIKE para búsqueda de texto parcial:**
+SELECT nombre, direccion
+FROM cliente
+WHERE direccion LIKE '%Calle%';
+
+-- **Consulta con subconsultas y operadores EXISTS o NOT EXISTS:**
+SELECT habitacion_tipo
+FROM hotel.habitacion
+WHERE EXISTS (
+    SELECT 1 FROM hotel.reserva WHERE reserva.id_habitacion = habitacion.id_habitacion
+);
+
+
+-- **Consulta con ordenamiento y paginación:**
+SELECT nombre, fecha_contratacion
+FROM hotel.empleado
+ORDER BY fecha_contratacion DESC
+LIMIT 5, 5;
