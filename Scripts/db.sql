@@ -1,12 +1,26 @@
 create database if not exists hotel;
 create table if not exists hotel.empleado(
 	id_empleado INT NOT NULL AUTO_INCREMENT,
+    id_turno int not null,
 	nombre varchar(30) NOT NULL,
     fecha_contratacion date,
-    turno enum('matutino', 'vespertino'),
     telefono varchar(10),
     primary key (id_empleado)
 );
+
+alter table hotel.empleado drop column turno;
+alter table hotel.empleado add column id_turno int;
+create table turnos(
+	id_turno INT NOT NULL AUTO_INCREMENT,
+    turno VARCHAR(50),
+    PRIMARY KEY (id_turno)
+);
+INSERT INTO hotel.turnos (turno) VALUES
+('Matutino'),
+('Vespertino');
+
+update empleado set id_turno = 1 where id_empleado < 6;
+SELECT * FROM hotel.empleado;
 
 create table if not exists hotel.cliente(
 	id_cliente INT NOT NULL AUTO_INCREMENT,
@@ -20,11 +34,29 @@ create table if not exists hotel.cliente(
 create table if not exists hotel.habitacion(
 	id_habitacion INT not null AUTO_INCREMENT,
     precio varchar(30) not null,
-    habitacion_tipo varchar(50) not null,
+    id_habitacion_tipo int not null,
     capacidad varchar (30) not null,
     disponibilidad enum('ocupado','vacio') not null,
     primary key(id_habitacion)
 );
+
+alter table hotel.habitacion drop column habitacion_tipo;
+alter table hotel.habitacion add column id_habitacion_tipo int;
+
+
+create table habitacion_tipo(
+	id INT NOT NULL AUTO_INCREMENT,
+    descripcion VARCHAR(50),
+    PRIMARY KEY (id)
+);
+
+INSERT INTO hotel.habitacion_tipo (descripcion) VALUES
+('VIP'),
+('normal');
+
+select * from habitacion;
+
+update habitacion set id_habitacion_tipo = 1 where id_habitacion < 5;
 
 create table if not exists hotel.reserva(
 	id_reserva INT NOT NULL AUTO_INCREMENT,
